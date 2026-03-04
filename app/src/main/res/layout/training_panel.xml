@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/trainingPanel"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/bg_card"
+    android:padding="12dp">
+
+    <!-- Иконка режима -->
+    <TextView
+        android:id="@+id/modeLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="🇺🇸→🇷🇺"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/text"
+        android:gravity="center"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Карточка слова -->
+    <LinearLayout
+        android:id="@+id/wordCard"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:background="@color/bg_dark"
+        android:padding="16dp"
+        android:layout_marginVertical="4dp"
+        android:gravity="center_vertical">
+
+        <!-- Горизонтальный LinearLayout для слова и кнопки на одной высоте -->
+        <LinearLayout
+            android:id="@+id/wordAndSpeakerContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="8dp">
+
+            <!-- Слово для перевода -->
+            <TextView
+                android:id="@+id/wordLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:textColor="@color/text"
+                android:gravity="center"
+                android:layout_marginEnd="8dp" />
+
+            <!-- Кнопка динамика - квадратная -->
+            <Button
+                android:id="@+id/speakerButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:text="🔊"
+                android:textSize="20sp"
+                android:background="@color/speaker"
+                android:textColor="@color/text"
+                android:gravity="center"
+                android:padding="0dp" />
+
+        </LinearLayout>
+
+        <!-- Подсказка -->
+        <TextView
+            android:id="@+id/hintLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Введите перевод:"
+            android:textSize="12sp"
+            android:textColor="@color/text_secondary"
+            android:gravity="center"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Поле ввода -->
+        <EditText
+            android:id="@+id/answerEntry"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:textSize="16sp"
+            android:background="@color/bg_card"
+            android:textColor="@color/text"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="8dp"
+            android:gravity="center" />
+
+    </LinearLayout>
+
+    <!-- Кнопка проверки -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="4dp">
+
+        <Button
+            android:id="@+id/checkButton"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:text="✅ Проверить"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:background="@color/primary"
+            android:textColor="@color/text"
+            android:paddingHorizontal="24dp"
+            android:paddingVertical="8dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

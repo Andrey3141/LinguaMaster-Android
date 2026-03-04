@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="32dp"
+    android:background="@color/bg_dark">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Выберите метод обучения"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/text"
+        android:gravity="center"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Как вы хотите тренироваться?"
+        android:textSize="14sp"
+        android:textColor="@color/text_secondary"
+        android:gravity="center"
+        android:layout_marginBottom="24dp"/>
+
+    <Button
+        android:id="@+id/method_manual"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="✍️ Ручной перевод"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:backgroundTint="@color/primary"
+        android:textColor="@color/text"
+        android:padding="16dp"
+        android:layout_marginBottom="12dp"/>
+
+    <Button
+        android:id="@+id/method_test"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="📝 Тест (выбор варианта)"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:backgroundTint="@color/secondary"
+        android:textColor="@color/text"
+        android:padding="16dp"
+        android:layout_marginBottom="12dp"/>
+
+    <Button
+        android:id="@+id/method_match"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="🔄 Соотношение (сопоставление)"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:backgroundTint="@color/accent"
+        android:textColor="@color/text"
+        android:padding="16dp"/>
+
+</LinearLayout>

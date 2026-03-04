@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bg_dark">#0f172a</color>
+    <color name="bg_card">#1e293b</color>
+    <color name="primary">#3b82f6</color>
+    <color name="secondary">#10b981</color>
+    <color name="accent">#8b5cf6</color>
+    <color name="text">#f1f5f9</color>
+    <color name="text_secondary">#94a3b8</color>
+    <color name="danger">#ef4444</color>
+    <color name="warning">#f59e0b</color>
+    <color name="success">#10b981</color>
+    <color name="border">#334155</color>
+    <color name="speaker">#8b5cf6</color>
+    <color name="speaker_hover">#7c3aed</color>
+    <color name="speaker_disabled">#4a4a4a</color>
+</resources>

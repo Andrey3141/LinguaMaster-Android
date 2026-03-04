@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mainContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_dark">
+
+    <!-- ЛЕВАЯ КНОПКА (всегда видима, поверх всего) -->
+    <LinearLayout
+        android:id="@+id/statsToggleButtonContainer"
+        android:layout_width="28dp"
+        android:layout_height="48dp"
+        android:layout_gravity="start|center_vertical"
+        android:layout_marginStart="4dp"
+        android:background="@drawable/toggle_button_attached"
+        android:elevation="8dp"
+        android:translationZ="8dp"
+        android:gravity="center"
+        android:visibility="visible">
+
+        <TextView
+            android:id="@+id/statsToggleButtonText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="›"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@color/text"
+            android:gravity="center" />
+
+    </LinearLayout>
+
+    <!-- ПРАВАЯ КНОПКА (всегда видима, поверх всего) -->
+    <LinearLayout
+        android:id="@+id/controlToggleButtonContainer"
+        android:layout_width="28dp"
+        android:layout_height="48dp"
+        android:layout_gravity="end|center_vertical"
+        android:layout_marginEnd="4dp"
+        android:background="@drawable/toggle_button_control"
+        android:elevation="8dp"
+        android:translationZ="8dp"
+        android:gravity="center"
+        android:visibility="visible">
+
+        <TextView
+            android:id="@+id/controlToggleButtonText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="‹"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@color/text"
+            android:gravity="center" />
+
+    </LinearLayout>
+
+    <!-- Основной контент (центрированный с одинаковыми отступами) -->
+    <LinearLayout
+        android:id="@+id/mainContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:padding="4dp">
+
+        <!-- Левый отступ (чтобы контент начинался после левой кнопки) -->
+        <Space
+            android:id="@+id/leftSpacer"
+            android:layout_width="36dp"
+            android:layout_height="match_parent" />
+
+        <!-- Центральная часть со словом и вводом - занимает все оставшееся место -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:paddingHorizontal="16dp">
+
+            <!-- Слово и кнопка озвучки -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginBottom="20dp">
+
+                <TextView
+                    android:id="@+id/wordLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="32sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text"
+                    android:layout_marginEnd="10dp" />
+
+                <Button
+                    android:id="@+id/speakerButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:text="🔊"
+                    android:textSize="22sp"
+                    android:background="@color/speaker"
+                    android:textColor="@color/text"
+                    android:gravity="center"
+                    android:padding="0dp" />
+
+            </LinearLayout>
+
+            <!-- Поле ввода -->
+            <EditText
+                android:id="@+id/answerEntry"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginBottom="14dp"
+                android:hint="Введите перевод"
+                android:textSize="16sp"
+                android:background="@color/bg_card"
+                android:textColor="@color/text"
+                android:paddingHorizontal="14dp"
+                android:gravity="center" />
+
+            <!-- Кнопка подтвердить -->
+            <Button
+                android:id="@+id/checkButton"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="✅ Подтвердить"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:background="@color/primary"
+                android:textColor="@color/text"
+                android:paddingHorizontal="28dp"
+                android:paddingVertical="10dp" />
+
+        </LinearLayout>
+
+        <!-- Правый отступ (чтобы контент заканчивался до правой кнопки) -->
+        <Space
+            android:id="@+id/rightSpacer"
+            android:layout_width="36dp"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
+    <!-- Левая панель статистики (выезжающая) -->
+    <LinearLayout
+        android:id="@+id/statsContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:elevation="4dp"
+        android:translationZ="4dp">
+
+        <!-- Панель статистики -->
+        <include
+            android:id="@+id/statsPanel"
+            layout="@layout/stats_panel"
+            android:layout_width="90dp"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
+    <!-- Правая панель управления (выезжающая) -->
+    <LinearLayout
+        android:id="@+id/controlContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:elevation="4dp"
+        android:translationZ="4dp">
+
+        <!-- Панель управления -->
+        <include
+            android:id="@+id/controlPanel"
+            layout="@layout/control_panel"
+            android:layout_width="90dp"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
+</FrameLayout>

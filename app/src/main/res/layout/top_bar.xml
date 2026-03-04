@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:orientation="horizontal"
+    android:background="@color/bg_dark"
+    android:paddingHorizontal="4dp"
+    android:gravity="center_vertical">
+
+    <!-- Логотип -->
+    <TextView
+        android:id="@+id/logo"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="🎓"
+        android:textSize="20sp"
+        android:textColor="@color/primary"
+        android:gravity="center_vertical"
+        android:layout_marginEnd="4dp" />
+
+    <!-- Кнопка полноэкранного режима -->
+    <Button
+        android:id="@+id/fullscreenButton"
+        android:layout_width="32dp"
+        android:layout_height="28dp"
+        android:text="⛶"
+        android:textSize="12sp"
+        android:background="@color/bg_card"
+        android:textColor="@color/text"
+        android:gravity="center"
+        android:padding="0dp"
+        android:layout_marginEnd="4dp" />
+
+    <!-- Статистика кратко -->
+    <TextView
+        android:id="@+id/statsLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="0|0|0%"
+        android:textSize="11sp"
+        android:textColor="@color/text_secondary"
+        android:gravity="center_vertical"
+        android:layout_marginEnd="4dp" />
+
+    <!-- Растяжка -->
+    <View
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+    <!-- Кнопки режимов -->
+    <HorizontalScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/modeFrame"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical" />
+
+    </HorizontalScrollView>
+
+</LinearLayout>
