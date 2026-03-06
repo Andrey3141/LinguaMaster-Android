@@ -108,7 +108,7 @@ object Config {
     val TEXTS = mapOf(
         "app_name" to "LinguaMaster",
         "app_subtitle" to "Тренажер иностранных слов",
-        "version" to "v1.2.0",
+        "version" to "v1.2.1",
         "year" to "2026"
     )
 }

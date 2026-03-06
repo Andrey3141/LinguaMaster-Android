@@ -15,20 +15,25 @@ class StatsPanel(
     private val context: Context,
     private val controller: Any
 ) {
-
     private lateinit var view: LinearLayout
     private lateinit var statsContainer: LinearLayout
     private lateinit var statsScrollView: ScrollView
     private val statValues = mutableMapOf<String, TextView>()
-    private lateinit var progressFill: View
-    private lateinit var progressText: TextView
-    private lateinit var progressBarContainer: FrameLayout
+
+    // Общий прогресс
+    private lateinit var overallProgressFill: View
+    private lateinit var overallProgressText: TextView
+    private lateinit var overallProgressBarContainer: FrameLayout
+
+    // Прогресс дня
+    private lateinit var dailyProgressFill: View
+    private lateinit var dailyProgressText: TextView
+    private lateinit var dailyProgressBarContainer: FrameLayout
 
     init {
         setupView()
         createStatsContent()
 
-        // Скрываем полосу прокрутки
         statsScrollView.isVerticalScrollBarEnabled = false
         statsScrollView.isHorizontalScrollBarEnabled = false
     }
@@ -40,83 +45,45 @@ class StatsPanel(
     }
 
     private fun createStatsContent() {
-        // ВСЕГО СЛОВ (вверху)
-
-        // Небольшой отступ сверху
+        // ВСЕГО СЛОВ
         addSpacer(8)
-
-        // Эмодзи + подпись "всего слов"
-        addStatRow("📚", "всего слов", "total")
-
-        // Средний промежуток
+        addStatRow("📚 ", "всего слов", "total")
         addSpacer(10)
-
-        // Значение 0
         addStatValue("total")
-
-        // Средний промежуток
         addSpacer(16)
 
         // ИЗУЧЕНО
-
-        // Эмодзи + подпись "изучено"
-        addStatRow("🎓", "изучено", "learned")
-
-        // Средний промежуток
+        addStatRow("🎓 ", "изучено", "learned")
         addSpacer(10)
-
-        // Значение 0
         addStatValue("learned")
-
-        // Средний промежуток
         addSpacer(16)
 
         // СЛОЖНЫЕ
-
-        // Эмодзи + подпись "сложные"
-        addStatRow("🎯", "сложные", "hard")
-
-        // Средний промежуток
+        addStatRow("🎯 ", "сложные", "hard")
         addSpacer(10)
-
-        // Значение 0
         addStatValue("hard")
-
-        // Средний промежуток
         addSpacer(16)
 
         // СЕГОДНЯ
-
-        // Эмодзи + подпись "сегодня"
-        addStatRow("📅", "сегодня", "today")
-
-        // Средний промежуток
+        addStatRow("📅 ", "сегодня", "today")
         addSpacer(10)
-
-        // Значение 0
         addStatValue("today")
-
-        // Большой промежуток перед прогрессом
         addSpacer(24)
 
-        // ПРОГРЕСС (в самом низу)
-
-        // Эмодзи прогресс
-        addProgressIconRow()
-
-        // Средний промежуток
+        // ОБЩИЙ ПРОГРЕСС (переименовано)
+        addProgressIconRow("общий прогресс")
         addSpacer(10)
-
-        // Панель прогресса
-        addProgressBar()
-
-        // Средний промежуток
+        addOverallProgressBar()
         addSpacer(10)
+        addOverallProgressText()
+        addSpacer(16)
 
-        // Текст 0%
-        addProgressText()
-
-        // Нижний отступ
+        // ПРОГРЕСС ДНЯ (новый)
+        addProgressIconRow("прогресс дня")
+        addSpacer(10)
+        addDailyProgressBar()
+        addSpacer(10)
+        addDailyProgressText()
         addSpacer(8)
     }
 
@@ -129,7 +96,7 @@ class StatsPanel(
         statsContainer.addView(spacer)
     }
 
-    private fun addProgressIconRow() {
+    private fun addProgressIconRow(label: String) {
         val rowLayout = LinearLayout(context).apply {
             orientation = LinearLayout.HORIZONTAL
             gravity = android.view.Gravity.CENTER
@@ -139,16 +106,14 @@ class StatsPanel(
             )
         }
 
-        // Эмодзи прогресса
         TextView(context).apply {
-            text = "📈"
+            text = "📈 "
             textSize = 18f
             setTextColor(Color.parseColor(Config.COLORS["text"]))
         }.also { rowLayout.addView(it) }
 
-        // Подпись "прогресс"
         TextView(context).apply {
-            text = "прогресс"
+            text = label
             textSize = 10f
             setTextColor(Color.parseColor(Config.COLORS["text_secondary"]))
             layoutParams = LinearLayout.LayoutParams(
@@ -162,8 +127,8 @@ class StatsPanel(
         statsContainer.addView(rowLayout)
     }
 
-    private fun addProgressBar() {
-        progressBarContainer = FrameLayout(context).apply {
+    private fun addOverallProgressBar() {
+        overallProgressBarContainer = FrameLayout(context).apply {
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 36
@@ -171,26 +136,24 @@ class StatsPanel(
             setPadding(8, 4, 8, 4)
         }
 
-        // Фон прогресс-бара
         val backgroundBar = View(context)
         backgroundBar.setBackgroundColor(Color.parseColor(Config.COLORS["bg_dark"]))
         backgroundBar.layoutParams = FrameLayout.LayoutParams(
             FrameLayout.LayoutParams.MATCH_PARENT,
             14
         )
-        progressBarContainer.addView(backgroundBar)
+        overallProgressBarContainer.addView(backgroundBar)
 
-        // Заполнение прогресс-бара
-        progressFill = View(context)
-        progressFill.setBackgroundColor(Color.parseColor(Config.COLORS["primary"]))
-        progressFill.layoutParams = FrameLayout.LayoutParams(0, 14)
-        progressBarContainer.addView(progressFill)
+        overallProgressFill = View(context)
+        overallProgressFill.setBackgroundColor(Color.parseColor(Config.COLORS["primary"]))
+        overallProgressFill.layoutParams = FrameLayout.LayoutParams(0, 14)
+        overallProgressBarContainer.addView(overallProgressFill)
 
-        statsContainer.addView(progressBarContainer)
+        statsContainer.addView(overallProgressBarContainer)
     }
 
-    private fun addProgressText() {
-        progressText = TextView(context).apply {
+    private fun addOverallProgressText() {
+        overallProgressText = TextView(context).apply {
             text = "0%"
             textSize = 22f
             setTypeface(null, android.graphics.Typeface.BOLD)
@@ -201,7 +164,47 @@ class StatsPanel(
                 LinearLayout.LayoutParams.WRAP_CONTENT
             )
         }
-        statsContainer.addView(progressText)
+        statsContainer.addView(overallProgressText)
+    }
+
+    private fun addDailyProgressBar() {
+        dailyProgressBarContainer = FrameLayout(context).apply {
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                36
+            )
+            setPadding(8, 4, 8, 4)
+        }
+
+        val backgroundBar = View(context)
+        backgroundBar.setBackgroundColor(Color.parseColor(Config.COLORS["bg_dark"]))
+        backgroundBar.layoutParams = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            14
+        )
+        dailyProgressBarContainer.addView(backgroundBar)
+
+        dailyProgressFill = View(context)
+        dailyProgressFill.setBackgroundColor(Color.parseColor(Config.COLORS["secondary"]))
+        dailyProgressFill.layoutParams = FrameLayout.LayoutParams(0, 14)
+        dailyProgressBarContainer.addView(dailyProgressFill)
+
+        statsContainer.addView(dailyProgressBarContainer)
+    }
+
+    private fun addDailyProgressText() {
+        dailyProgressText = TextView(context).apply {
+            text = "0%"
+            textSize = 22f
+            setTypeface(null, android.graphics.Typeface.BOLD)
+            setTextColor(Color.parseColor(Config.COLORS["text"]))
+            gravity = android.view.Gravity.CENTER
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+        }
+        statsContainer.addView(dailyProgressText)
     }
 
     private fun addStatRow(icon: String, label: String, key: String) {
@@ -214,14 +217,12 @@ class StatsPanel(
             )
         }
 
-        // Эмодзи
         TextView(context).apply {
             text = icon
             textSize = 18f
             setTextColor(Color.parseColor(Config.COLORS["text"]))
         }.also { rowLayout.addView(it) }
 
-        // Подпись
         TextView(context).apply {
             text = label
             textSize = 10f
@@ -259,21 +260,32 @@ class StatsPanel(
         val hardWords = stats["hard_words"] as Int
         val dailyWords = stats["daily_words"] as Int
         val progress = stats["progress"] as Double
+        val accuracyToday = stats["accuracy_today"] as Double
 
         statValues["total"]?.text = formatNumber(totalWords)
         statValues["learned"]?.text = formatNumber(learnedWords)
         statValues["hard"]?.text = formatNumber(hardWords)
         statValues["today"]?.text = formatNumber(dailyWords)
 
-        progressText.text = "${progress.toInt()}%"
-
-        // Обновляем ширину заполнения прогресс-бара
-        progressBarContainer.post {
-            val width = progressBarContainer.width - 16
+        // Общий прогресс
+        overallProgressText.text = "${progress.toInt()}%"
+        overallProgressBarContainer.post {
+            val width = overallProgressBarContainer.width - 16
             if (width > 0) {
                 val fillWidth = (width * (progress / 100)).toInt()
-                progressFill.layoutParams.width = fillWidth
-                progressFill.requestLayout()
+                overallProgressFill.layoutParams.width = fillWidth
+                overallProgressFill.requestLayout()
+            }
+        }
+
+        // Прогресс дня (точность)
+        dailyProgressText.text = "${accuracyToday.toInt()}%"
+        dailyProgressBarContainer.post {
+            val width = dailyProgressBarContainer.width - 16
+            if (width > 0) {
+                val fillWidth = (width * (accuracyToday / 100)).toInt()
+                dailyProgressFill.layoutParams.width = fillWidth
+                dailyProgressFill.requestLayout()
             }
         }
     }

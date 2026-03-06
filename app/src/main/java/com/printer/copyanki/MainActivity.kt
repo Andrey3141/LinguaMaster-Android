@@ -16,13 +16,13 @@ import com.printer.copyanki.models.VocabularyModel
 import com.printer.copyanki.utils.SettingsManager
 import com.printer.copyanki.utils.SpeechSynthesizer
 import com.printer.copyanki.utils.speechSynth
+import com.printer.copyanki.views.BottomBar
 import com.printer.copyanki.views.ControlPanel
 import com.printer.copyanki.views.ControlPanelController
 import com.printer.copyanki.views.StatsPanel
 import java.util.Locale
 
 class MainActivity : AppCompatActivity(), ControlPanelController {
-
     private lateinit var wordLabel: TextView
     private lateinit var speakerButton: Button
     private lateinit var answerEntry: EditText
@@ -40,9 +40,12 @@ class MainActivity : AppCompatActivity(), ControlPanelController {
     private lateinit var controlContainer: LinearLayout
     private lateinit var controlPanel: ControlPanel
 
+    // Нижняя панель (BottomBar)
+    private lateinit var bottomBar: BottomBar
+
     private lateinit var model: VocabularyModel
     private var currentWordObj: Map<String, Any>? = null
-    private var currentDisplayWord = ""
+    private var currentDisplayWord = " "
 
     // Состояния панелей
     private var isStatsVisible = false
@@ -93,6 +96,12 @@ class MainActivity : AppCompatActivity(), ControlPanelController {
         controlPanelContainer.removeAllViews()
         controlPanelContainer.addView(controlPanel.getView())
 
+        // Инициализируем нижнюю панель (BottomBar)
+        val bottomBarContainer = findViewById<LinearLayout>(R.id.bottomBar)
+        bottomBar = BottomBar(this, this)
+        bottomBarContainer.removeAllViews()
+        bottomBarContainer.addView(bottomBar.getView())
+
         // Измеряем ширину контейнеров
         measurePanels()
 
@@ -105,211 +114,118 @@ class MainActivity : AppCompatActivity(), ControlPanelController {
 
     private fun measurePanels() {
         statsContainer.post {
-            Log.d(TAG, "Measuring stats container")
             statsContainer.measure(
                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
             )
             statsWidth = statsContainer.measuredWidth
             statsContainer.translationX = -statsWidth.toFloat()
-            Log.d(TAG, "Stats width = $statsWidth")
         }
 
         controlContainer.post {
-            Log.d(TAG, "Measuring control container")
             controlContainer.measure(
                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
             )
             controlWidth = controlContainer.measuredWidth
             controlContainer.translationX = controlWidth.toFloat()
-            Log.d(TAG, "Control width = $controlWidth")
         }
     }
 
     private fun setupListeners() {
-        // Кнопка озвучки
         speakerButton.setOnClickListener {
-            Log.d(TAG, "Speaker button clicked")
             speakCurrentWord()
             closeAllPanels()
         }
 
-        // Поле ввода
-        answerEntry.setOnClickListener {
-            Log.d(TAG, "Answer entry clicked")
-            closeAllPanels()
-        }
-
+        answerEntry.setOnClickListener { closeAllPanels() }
         answerEntry.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                Log.d(TAG, "Answer entry focused")
-                closeAllPanels()
-            }
+            if (hasFocus) closeAllPanels()
         }
 
-        // Кнопка подтвердить
         checkButton.setOnClickListener {
-            Log.d(TAG, "Check button clicked")
             checkAnswer()
             closeAllPanels()
         }
 
-        // Кнопки открытия панелей
-        statsToggleButtonContainer.setOnClickListener {
-            Log.d(TAG, "Stats toggle button clicked")
-            toggleStatsPanel()
-        }
-
-        controlToggleButtonContainer.setOnClickListener {
-            Log.d(TAG, "Control toggle button clicked")
-            toggleControlPanel()
-        }
-
-        // Основной контент
-        findViewById<LinearLayout>(R.id.mainContent).setOnClickListener {
-            Log.d(TAG, "Main content clicked")
-            closeAllPanels()
-        }
+        statsToggleButtonContainer.setOnClickListener { toggleStatsPanel() }
+        controlToggleButtonContainer.setOnClickListener { toggleControlPanel() }
+        findViewById<LinearLayout>(R.id.mainContent).setOnClickListener { closeAllPanels() }
     }
 
     private fun toggleStatsPanel() {
-        Log.d(TAG, "toggleStatsPanel called, current state: $isStatsVisible")
-
         if (isStatsVisible) {
-            // Закрываем панель статистики
             isStatsVisible = false
-
-            val containerAnimator = ObjectAnimator.ofFloat(statsContainer, "translationX", 0f, -statsWidth.toFloat())
-            containerAnimator.duration = 300
-            containerAnimator.interpolator = DecelerateInterpolator()
-            containerAnimator.start()
-
-            val buttonAnimator = ObjectAnimator.ofFloat(statsToggleButtonContainer, "translationX", statsWidth.toFloat(), 0f)
-            buttonAnimator.duration = 300
-            buttonAnimator.interpolator = DecelerateInterpolator()
-            buttonAnimator.start()
-
-            rotateText(statsToggleButtonText, 180f, 360f)
-
-            containerAnimator.doOnEnd {
-                statsContainer.visibility = View.GONE
-                Log.d(TAG, "Stats panel hidden")
+            ObjectAnimator.ofFloat(statsContainer, "translationX", 0f, -statsWidth.toFloat()).apply {
+                duration = 300; interpolator = DecelerateInterpolator(); start()
+            }.doOnEnd { statsContainer.visibility = View.GONE }
+            ObjectAnimator.ofFloat(statsToggleButtonContainer, "translationX", statsWidth.toFloat(), 0f).apply {
+                duration = 300; interpolator = DecelerateInterpolator(); start()
             }
+            rotateText(statsToggleButtonText, 180f, 360f)
         } else {
-            // Открываем панель статистики
             isStatsVisible = true
             statsContainer.visibility = View.VISIBLE
-
-            val containerAnimator = ObjectAnimator.ofFloat(statsContainer, "translationX", -statsWidth.toFloat(), 0f)
-            containerAnimator.duration = 300
-            containerAnimator.interpolator = DecelerateInterpolator()
-            containerAnimator.start()
-
-            val buttonAnimator = ObjectAnimator.ofFloat(statsToggleButtonContainer, "translationX", 0f, statsWidth.toFloat())
-            buttonAnimator.duration = 300
-            buttonAnimator.interpolator = DecelerateInterpolator()
-            buttonAnimator.start()
-
+            ObjectAnimator.ofFloat(statsContainer, "translationX", -statsWidth.toFloat(), 0f).apply {
+                duration = 300; interpolator = DecelerateInterpolator(); start()
+            }
+            ObjectAnimator.ofFloat(statsToggleButtonContainer, "translationX", 0f, statsWidth.toFloat()).apply {
+                duration = 300; interpolator = DecelerateInterpolator(); start()
+            }
             rotateText(statsToggleButtonText, 0f, 180f)
-
-            Log.d(TAG, "Stats panel shown")
         }
     }
 
     private fun toggleControlPanel() {
-        Log.d(TAG, "toggleControlPanel called, current state: $isControlVisible")
-
         if (isControlVisible) {
-            // Закрываем панель управления
             isControlVisible = false
-
-            val containerAnimator = ObjectAnimator.ofFloat(controlContainer, "translationX", 0f, controlWidth.toFloat())
-            containerAnimator.duration = 300
-            containerAnimator.interpolator = DecelerateInterpolator()
-            containerAnimator.start()
-
-            val buttonAnimator = ObjectAnimator.ofFloat(controlToggleButtonContainer, "translationX", -controlWidth.toFloat(), 0f)
-            buttonAnimator.duration = 300
-            buttonAnimator.interpolator = DecelerateInterpolator()
-            buttonAnimator.start()
-
-            rotateText(controlToggleButtonText, 180f, 360f)
-
-            containerAnimator.doOnEnd {
-                controlContainer.visibility = View.GONE
-                Log.d(TAG, "Control panel hidden")
+            ObjectAnimator.ofFloat(controlContainer, "translationX", 0f, controlWidth.toFloat()).apply {
+                duration = 300; interpolator = DecelerateInterpolator(); start()
+            }.doOnEnd { controlContainer.visibility = View.GONE }
+            ObjectAnimator.ofFloat(controlToggleButtonContainer, "translationX", -controlWidth.toFloat(), 0f).apply {
+                duration = 300; interpolator = DecelerateInterpolator(); start()
             }
+            rotateText(controlToggleButtonText, 180f, 360f)
         } else {
-            // Открываем панель управления
             isControlVisible = true
             controlContainer.visibility = View.VISIBLE
-
-            val containerAnimator = ObjectAnimator.ofFloat(controlContainer, "translationX", controlWidth.toFloat(), 0f)
-            containerAnimator.duration = 300
-            containerAnimator.interpolator = DecelerateInterpolator()
-            containerAnimator.start()
-
-            val buttonAnimator = ObjectAnimator.ofFloat(controlToggleButtonContainer, "translationX", 0f, -controlWidth.toFloat())
-            buttonAnimator.duration = 300
-            buttonAnimator.interpolator = DecelerateInterpolator()
-            buttonAnimator.start()
-
+            ObjectAnimator.ofFloat(controlContainer, "translationX", controlWidth.toFloat(), 0f).apply {
+                duration = 300; interpolator = DecelerateInterpolator(); start()
+            }
+            ObjectAnimator.ofFloat(controlToggleButtonContainer, "translationX", 0f, -controlWidth.toFloat()).apply {
+                duration = 300; interpolator = DecelerateInterpolator(); start()
+            }
             rotateText(controlToggleButtonText, 0f, 180f)
-
-            Log.d(TAG, "Control panel shown")
         }
     }
 
     private fun closeAllPanels() {
-        Log.d(TAG, "closeAllPanels called")
-
         if (isStatsVisible) {
             isStatsVisible = false
-
-            val containerAnimator = ObjectAnimator.ofFloat(statsContainer, "translationX", 0f, -statsWidth.toFloat())
-            containerAnimator.duration = 300
-            containerAnimator.interpolator = DecelerateInterpolator()
-            containerAnimator.start()
-
-            val buttonAnimator = ObjectAnimator.ofFloat(statsToggleButtonContainer, "translationX", statsWidth.toFloat(), 0f)
-            buttonAnimator.duration = 300
-            buttonAnimator.interpolator = DecelerateInterpolator()
-            buttonAnimator.start()
-
-            rotateText(statsToggleButtonText, 180f, 360f)
-
-            containerAnimator.doOnEnd {
-                statsContainer.visibility = View.GONE
+            ObjectAnimator.ofFloat(statsContainer, "translationX", 0f, -statsWidth.toFloat()).apply {
+                duration = 300; interpolator = DecelerateInterpolator(); start()
+            }.doOnEnd { statsContainer.visibility = View.GONE }
+            ObjectAnimator.ofFloat(statsToggleButtonContainer, "translationX", statsWidth.toFloat(), 0f).apply {
+                duration = 300; interpolator = DecelerateInterpolator(); start()
             }
+            rotateText(statsToggleButtonText, 180f, 360f)
         }
-
         if (isControlVisible) {
             isControlVisible = false
-
-            val containerAnimator = ObjectAnimator.ofFloat(controlContainer, "translationX", 0f, controlWidth.toFloat())
-            containerAnimator.duration = 300
-            containerAnimator.interpolator = DecelerateInterpolator()
-            containerAnimator.start()
-
-            val buttonAnimator = ObjectAnimator.ofFloat(controlToggleButtonContainer, "translationX", -controlWidth.toFloat(), 0f)
-            buttonAnimator.duration = 300
-            buttonAnimator.interpolator = DecelerateInterpolator()
-            buttonAnimator.start()
-
-            rotateText(controlToggleButtonText, 180f, 360f)
-
-            containerAnimator.doOnEnd {
-                controlContainer.visibility = View.GONE
+            ObjectAnimator.ofFloat(controlContainer, "translationX", 0f, controlWidth.toFloat()).apply {
+                duration = 300; interpolator = DecelerateInterpolator(); start()
+            }.doOnEnd { controlContainer.visibility = View.GONE }
+            ObjectAnimator.ofFloat(controlToggleButtonContainer, "translationX", -controlWidth.toFloat(), 0f).apply {
+                duration = 300; interpolator = DecelerateInterpolator(); start()
             }
+            rotateText(controlToggleButtonText, 180f, 360f)
         }
     }
 
     private fun rotateText(textView: TextView, from: Float, to: Float) {
-        val rotationAnimator = ObjectAnimator.ofFloat(textView, "rotation", from, to)
-        rotationAnimator.duration = 300
-        rotationAnimator.interpolator = DecelerateInterpolator()
-        rotationAnimator.start()
+        ObjectAnimator.ofFloat(textView, "rotation", from, to).apply {
+            duration = 300; interpolator = DecelerateInterpolator(); start()
+        }
     }
 
     private fun loadNextWord() {
@@ -339,7 +255,6 @@ class MainActivity : AppCompatActivity(), ControlPanelController {
             Toast.makeText(this, "Введите перевод", Toast.LENGTH_SHORT).show()
             return
         }
-
         if (currentWordObj == null) return
 
         val correctAnswer = currentWordObj!!["translation"] as String
@@ -360,66 +275,34 @@ class MainActivity : AppCompatActivity(), ControlPanelController {
     private fun updateStats() {
         val stats = model.getStats()
         statsPanel.updateStats(stats)
+        bottomBar.updateSpeechStatus()  // ← Обновляем иконку звука
     }
 
-    // Реализация методов интерфейса ControlPanelController
-    override fun addWordDialog() {
-        Toast.makeText(this, "Добавить слово", Toast.LENGTH_SHORT).show()
-        // TODO: реализовать диалог добавления слова
-    }
-
-    override fun showVocabulary() {
-        Toast.makeText(this, "Показать словарь", Toast.LENGTH_SHORT).show()
-        // TODO: реализовать показ словаря
-    }
-
-    override fun showSettingsDialog() {
-        Toast.makeText(this, "Настройки", Toast.LENGTH_SHORT).show()
-        // TODO: реализовать диалог настроек
-    }
-
-    override fun refreshWords() {
-        loadNextWord()
-        Toast.makeText(this, "Слова обновлены", Toast.LENGTH_SHORT).show()
-    }
-
-    override fun showLearningMethod() {
-        Toast.makeText(this, "Метод обучения", Toast.LENGTH_SHORT).show()
-        // TODO: реализовать выбор метода обучения
-    }
-
-    override fun showHardWords() {
-        Toast.makeText(this, "Сложные слова", Toast.LENGTH_SHORT).show()
-        // TODO: реализовать показ сложных слов
-    }
-
-    override fun showDetailedStats() {
-        Toast.makeText(this, "Детальная статистика", Toast.LENGTH_SHORT).show()
-        // TODO: реализовать детальную статистику
-    }
-
-    override fun quickTraining() {
-        loadNextWord()
-        Toast.makeText(this, "Быстрая тренировка", Toast.LENGTH_SHORT).show()
-    }
-
-    override fun changeLanguageDialog() {
-        Toast.makeText(this, "Смена языка", Toast.LENGTH_SHORT).show()
-        // TODO: реализовать смену языка
-    }
+    // Реализация ControlPanelController
+    override fun addWordDialog() = Toast.makeText(this, "Добавить слово", Toast.LENGTH_SHORT).show()
+    override fun showVocabulary() = Toast.makeText(this, "Показать словарь", Toast.LENGTH_SHORT).show()
+    override fun showSettingsDialog() = Toast.makeText(this, "Настройки", Toast.LENGTH_SHORT).show()
+    override fun refreshWords() { loadNextWord(); Toast.makeText(this, "Слова обновлены", Toast.LENGTH_SHORT).show() }
+    override fun showLearningMethod() = Toast.makeText(this, "Метод обучения", Toast.LENGTH_SHORT).show()
+    override fun showHardWords() = Toast.makeText(this, "Сложные слова", Toast.LENGTH_SHORT).show()
+    override fun showDetailedStats() = Toast.makeText(this, "Детальная статистика", Toast.LENGTH_SHORT).show()
+    override fun quickTraining() { loadNextWord(); Toast.makeText(this, "Быстрая тренировка", Toast.LENGTH_SHORT).show() }
+    override fun changeLanguageDialog() = Toast.makeText(this, "Смена языка", Toast.LENGTH_SHORT).show()
 
     override fun onDestroy() {
         super.onDestroy()
         speechSynth.destroy()
     }
+
+    fun isSpeechEnabled(): Boolean {
+        return speechSynth.enabled
+    }
 }
 
-// Extension function for ObjectAnimator
+// Extension function
 fun ObjectAnimator.doOnEnd(action: () -> Unit): ObjectAnimator {
-    this.addListener(object : android.animation.AnimatorListenerAdapter() {
-        override fun onAnimationEnd(animation: android.animation.Animator) {
-            action()
-        }
+    addListener(object : android.animation.AnimatorListenerAdapter() {
+        override fun onAnimationEnd(animation: android.animation.Animator) = action()
     })
     return this
 }

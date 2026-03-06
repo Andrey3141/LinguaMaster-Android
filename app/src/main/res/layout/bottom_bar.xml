@@ -7,48 +7,28 @@
     android:paddingHorizontal="4dp"
     android:gravity="center_vertical">
 
-    <!-- Левая часть - прогресс -->
-    <LinearLayout
+    <!-- Левая часть: статус озвучки -->
+    <TextView
+        android:id="@+id/speechStatusLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="🔊"
+        android:textSize="12sp"
+        android:textColor="@color/text_secondary"
+        android:layout_marginEnd="8dp" />
+
+    <!-- Растяжка (пустое пространство) -->
+    <View
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:layout_weight="1" />
 
-        <TextView
-            android:id="@+id/progressLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0%"
-            android:textSize="10sp"
-            android:textColor="@color/text_secondary"
-            android:layout_marginEnd="4dp" />
-
-        <TextView
-            android:id="@+id/dailyCounterLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="•0"
-            android:textSize="10sp"
-            android:textColor="@color/text_secondary"
-            android:layout_marginEnd="4dp" />
-
-        <TextView
-            android:id="@+id/speechStatusLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="🔊"
-            android:textSize="12sp"
-            android:textColor="@color/text_secondary" />
-
-    </LinearLayout>
-
-    <!-- Правая часть - версия -->
+    <!-- Правая часть: версия из Config (прижата вправо) -->
     <TextView
         android:id="@+id/versionLabel"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:text="v1.0"
+        android:text="© 2026 LinguaMaster v1.0"
         android:textSize="9sp"
         android:textColor="@color/text_secondary"
         android:gravity="center_vertical|end" />
